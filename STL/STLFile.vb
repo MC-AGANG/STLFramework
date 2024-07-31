@@ -7,6 +7,7 @@ Public Class STLFile
     ''' 包含这个STL模型文件中所有的体
     ''' </summary>
     Public Solids As List(Of Solid)
+
     ''' <summary>
     ''' 创建新的空白STL模型
     ''' </summary>
@@ -82,8 +83,13 @@ Public Class STLFile
             Dim fs As New FileStream(Path, FileMode.Open)
             Dim reader2 As New BinaryReader(fs)
             Dim face_count As UInteger
+            Dim temp_title As Byte()
             Do Until fs.Position + 80 > fs.Length
-                temp_solid = New Solid With {.Title = reader2.ReadChars(79)}
+                temp_solid = New Solid
+                temp_title = reader2.ReadBytes(80)
+                For i = 0 To 79
+                    temp_solid.Title += Chr(temp_title(i))
+                Next
                 face_count = reader2.ReadUInt32
                 For i As UInteger = 1 To face_count
                     fs.Position += 12
